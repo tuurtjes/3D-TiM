@@ -1,0 +1,47 @@
+%%% Assembly of the global matrices
+
+m = 1;
+E = 200e9;
+G = 70e9;
+rho = 8e3;
+A = 0.01;
+Ix = 10;
+Iy = 10;
+PHI =0.8;
+
+
+M_P = [ m , E , G , rho ];
+Sec_prop = [ A , Ix , Iy , PHI ];
+
+% define the global mass and stiffness matrix
+[N_nodes , ~ ] = size(Node.x);
+M_g = zeros(N_nodes*4);
+K_g = M_g;
+
+for i = 1:N_elements
+    %%% location dependent material properties some if loops to be
+    %%% integrated later
+    % get element matrices
+    [K_el , M_el] = element_matrix_2D(M_P,Sec_prop,Element.length(i),Element.dir(i),'TIM');
+    
+    %%% fill up the global matrix
+    % find nodes that are connected to the element
+    n1 = Element.connect(i,1);
+    n2 = Element.connect(i,2);
+    % split the element matrix up into four parts
+    K_el_part = mat2cell(K_el,[2 2],[2 2]);
+    M_el_part = mat2cell(M_el,[2 2],[2 2]);
+    % fill global matrices with the parts of the element matrices
+    K_g(n1*4-3:n1*4,n1*4-3:n1*4) = K_g(n1*4-3:n1*4,n1*4-3:n1*4) + K_el_part{1,1};
+    K_g(n2*4-3:n2*4,n1*4-3:n1*4) = K_g(n2*4-3:n2*4,n1*4-3:n1*4) + K_el_part{2,1};
+    K_g(n1*4-3:n1*4,n2*4-3:n2*4) = K_g(n1*4-3:n1*4,n2*4-3:n2*4) + K_el_part{1,2};
+    K_g(n2*4-3:n2*4,n2*4-3:n2*4) = K_g(n2*4-3:n2*4,n2*4-3:n2*4) + K_el_part{2,2};
+    
+    M_g(n1*4-3:n1*4,n1*4-3:n1*4) = M_g(n1*4-3:n1*4,n1*4-3:n1*4) + M_el_part{1,1};
+    M_g(n2*4-3:n2*4,n1*4-3:n1*4) = M_g(n2*4-3:n2*4,n1*4-3:n1*4) + M_el_part{2,1};
+    M_g(n1*4-3:n1*4,n2*4-3:n2*4) = M_g(n1*4-3:n1*4,n2*4-3:n2*4) + M_el_part{1,2};
+    M_g(n2*4-3:n2*4,n2*4-3:n2*4) = M_g(n2*4-3:n2*4,n2*4-3:n2*4) + M_el_part{2,2};
+    
+end
+
+    

@@ -1,0 +1,16 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Plotting the elements
+%%% Arthur Schout
+%%% 03/12/2017
+%%% v_01 - 03/12/17
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+figure(1)
+hold on
+
+for i = 1:N_elements
+    X_el = [ Element.node1.x(i) ; Element.node2.x(i) ];
+    Y_el = [ Element.node1.y(i) ; Element.node2.y(i) ];
+    Z_el = [ Element.node1.z(i) ; Element.node2.z(i) ];
+    plot3(X_el,Y_el,Z_el,'o')
+end
